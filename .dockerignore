@@ -1,6 +1,5 @@
-
-venv/
 .venv/
+venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -8,5 +7,10 @@ __pycache__/
 .git/
 .env
 .env.*
-!.env.example
+*.backup
+requirements.txt.backup
+.coverage
+htmlcov/
+dist/
+build/
 *.log
