@@ -1,0 +1,51 @@
+
+name: Cloud Native DevOps CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Run API and Database Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: employee_db
+          POSTGRES_USER: employee_user
+          POSTGRES_PASSWORD: ci_test_password
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd "pg_isready -U employee_user -d employee_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5434
+      DB_NAME: employee_db
+      DB_USER: employee_user
+      DB_PASSWORD: ci_test_password
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pytest
+        run: |
+          pytest tests/ -v
